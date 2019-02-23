@@ -12,7 +12,7 @@ from ..flat_sky_projection import FlatSkyProjection
 
 class HealpixMapROI(HealpixROIBase):
 
-    def __init__(self, model_radius, roimap=None, roifile=None, threshold=0.5, *args, **kwargs):
+    def __init__(self, data_radius, model_radius, roimap=None, roifile=None, threshold=0.5, *args, **kwargs):
         """
         A cone Region of Interest defined by a healpix map (can be read from a fits file).
         User needs to supply a cone region (center and radius) defining the plane projection for the model map.
@@ -41,6 +41,8 @@ class HealpixMapROI(HealpixROIBase):
         assert roifile is not None or roimap is not None, "Must supply either healpix map or fitsfile to create HealpixMapROI"
 
         self._center = SkyDirection(*args, **kwargs)
+
+        self._data_radius_radians = _get_radians(data_radius)
 
         self._model_radius_radians = _get_radians(model_radius)
 
@@ -89,6 +91,7 @@ class HealpixMapROI(HealpixROIBase):
         s = {'ROI type': type(self).__name__.split(".")[-1],
              'ra': ra,
              'dec': dec,
+             'data_radius_deg': np.rad2deg(self._data_radius_radians),
              'model_radius_deg': np.rad2deg(self._model_radius_radians),
              'roimap': self._roimaps[self._original_nside],
              'threshold': self._threshold,
@@ -99,7 +102,7 @@ class HealpixMapROI(HealpixROIBase):
     @classmethod
     def from_dict(cls, data):
 
-        return cls(data['model_radius_deg'], threshold=data['threshold'],
+        return cls(data['data_radius_deg'], data['model_radius_deg'], threshold=data['threshold'],
                    roimap=data['roimap'], ra=data['ra'],
                    dec=data['dec'], roifile=data['roifile'])
 
@@ -122,6 +125,10 @@ class HealpixMapROI(HealpixROIBase):
     def ra_dec_center(self):
 
         return self._get_ra_dec()
+
+    @property
+    def data_radius(self):
+        return self._data_radius_radians * u.rad
 
     @property
     def model_radius(self):
