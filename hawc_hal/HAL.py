@@ -43,7 +43,7 @@ class HAL(PluginPrototype):
     :param flat_sky_pixels_size: size of the pixel for the flat sky projection (Hammer Aitoff)
     """
 
-    def __init__(self, name, maptree, response_file, roi, flat_sky_pixels_size=0.17):
+    def __init__(self, name, maptree, response_file, roi, flat_sky_pixels_size=0.17, n_transits = None):
 
         # Store ROI
         self._roi = roi
@@ -54,7 +54,7 @@ class HAL(PluginPrototype):
 
         # Read map tree (data)
 
-        self._maptree = map_tree_factory(maptree, roi=roi)
+        self._maptree = map_tree_factory(maptree, roi=roi, n_transits=n_transits)
 
         # Read detector response_file
 

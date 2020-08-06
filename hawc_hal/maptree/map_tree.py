@@ -12,14 +12,14 @@ from from_hdf5_file import from_hdf5_file
 import astropy.units as u
 
 
-def map_tree_factory(map_tree_file, roi):
+def map_tree_factory(map_tree_file, roi, n_transits = None):
 
     # Sanitize files in input (expand variables and so on)
     map_tree_file = sanitize_filename(map_tree_file)
 
     if os.path.splitext(map_tree_file)[-1] == '.root':
 
-        return MapTree.from_root_file(map_tree_file, roi)
+        return MapTree.from_root_file(map_tree_file, roi, n_transits)
 
     else:
 
@@ -41,7 +41,7 @@ class MapTree(object):
         return cls(data_analysis_bins, roi)
 
     @classmethod
-    def from_root_file(cls, map_tree_file, roi):
+    def from_root_file(cls, map_tree_file, roi, n_transits = None):
         """
         Create a MapTree object from a ROOT file and a ROI. Do not use this directly, use map_tree_factory instead.
 
@@ -50,7 +50,7 @@ class MapTree(object):
         :return:
         """
 
-        data_analysis_bins = from_root_file(map_tree_file, roi)
+        data_analysis_bins = from_root_file(map_tree_file, roi, n_transits)
 
         return cls(data_analysis_bins, roi)
 

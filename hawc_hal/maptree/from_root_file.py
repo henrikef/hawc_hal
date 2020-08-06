@@ -37,7 +37,7 @@ def _get_bin_object(f, bin_name, suffix):
     return bin_tobject
 
 
-def from_root_file(map_tree_file, roi):
+def from_root_file(map_tree_file, roi, n_transits = None):
     """
     Create a MapTree object from a ROOT file and a ROI. Do not use this directly, use map_tree_factory instead.
 
@@ -88,15 +88,17 @@ def from_root_file(map_tree_file, roi):
             data_bins_labels = [ str(i) for i in data_bins_labels ]
 
 
-        # A transit is defined as 1 day, and totalDuration is in hours
-        # Get the number of transit from bin 0 (as LiFF does)
 
-        n_transits = root_numpy.tree2array(f.Get("BinInfo"), "totalDuration") / 24.0
+        if n_transits is None:
+        
+          # A transit is defined as 1 day, and totalDuration is in hours
+          # Get the number of transit from bin 0 (as LiFF does)
+          n_transits = root_numpy.tree2array(f.Get("BinInfo"), "totalDuration") / 24.0
 
-        # The map-maker underestimate the livetime of bins with low statistic by removing time intervals with
-        # zero events. Therefore, the best estimate of the livetime is the maximum of n_transits, which normally
-        # happen in the bins with high statistic
-        n_transits = max(n_transits)
+          # The map-maker underestimate the livetime of bins with low statistic by removing time intervals with
+          # zero events. Therefore, the best estimate of the livetime is the maximum of n_transits, which normally
+          # happen in the bins with high statistic
+          n_transits = max(n_transits)
 
         n_bins = len(data_bins_labels)
 
